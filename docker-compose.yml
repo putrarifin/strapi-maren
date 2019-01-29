@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    image: strapi/strapi
+    environment:
+      - APP_NAME=strapi-app
+      - DATABASE_CLIENT=mongo
+      - DATABASE_HOST=db
+      - DATABASE_PORT=27017
+      - DATABASE_NAME=strapi
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=example@$%123
+      - DATABASE_SSL=false
+      - DATABASE_AUTHENTICATION_DATABASE=strapi
+      - HOST=localhost
+      - VIRTUAL_HOST=maren.putrarifin.me
+      - VIRTUAL_PORT=1337
+      - LETSENCRYPT_HOST=maren.putrarifin.me
+      - LETSENCRYPT_EMAIL=putrarifin@gmail.com
+    ports:
+      - 1337:1337
+    expose:
+      - 1337
+    volumes:
+      - ./strapi-app:/usr/src/api/strapi-app
+      #- /usr/src/api/strapi-app/node_modules
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=strapi
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example@$%123
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db:/data/db
+    restart: always
+networks:
+  default:
+    external:
+      name: nginx-proxy
